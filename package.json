@@ -1,10 +1,15 @@
 {
   "name": "umd-package-loader",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "umd 包加载器",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
-  "keywords": ["loader", "package-loader", "component-loader", "umd-loader"],
+  "keywords": [
+    "loader",
+    "package-loader",
+    "component-loader",
+    "umd-loader"
+  ],
   "files": [
     "lib"
   ],
