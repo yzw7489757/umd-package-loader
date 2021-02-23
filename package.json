@@ -4,7 +4,7 @@
   "description": "umd 包加载器",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
-  "keywords": [],
+  "keywords": ["loader", "package-loader", "component-loader", "umd-loader"],
   "files": [
     "lib"
   ],
