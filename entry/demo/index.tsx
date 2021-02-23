@@ -5,7 +5,7 @@ export default (): JSX.Element => {
   const [com, setCom] = React.useState(null)
   useEffect(() => {
     new Loader({
-      url: 'https://0.0.0.0:8400/lib/reactDemo.js',
+      url: 'https://dev.g.alicdn.com/xspace/component-voice-to-text/0.1.0/index.js',
       name: 'reactFooter',
     }).loadScript().then(component => {
       const node = component.default;

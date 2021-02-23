@@ -24,9 +24,9 @@ const LazyLoadComponent = (): JSX.Element => {
 }
 ```
  
-support requirejs，When the page has requirejs, it will be loaded in the way of define + require。if not, will use `document.createElement('script')` load script.
+support requirejs，When the page has requirejs, it will be loaded in the way of `require`.if not, will use `document.createElement('script')` load script.
 
-be careful, must follow `commonjs` or `amd` standard, forever, `umd` better. e.g. webpack 
+be careful, must follow `commonjs` or `amd` standard, forever, `umd` better. e.g. webpack config
 
 ``` js
 module.exports = {
@@ -35,7 +35,7 @@ module.exports = {
     reactDemo: resolve(__dirname, '../appGrounds/react/index.tsx')
   },
   output: {
-    library: "xxx", // moduleName, the loader prop
+    library: "xxxCom", // moduleName, the loader prop
     libraryTarget: 'umd', // must
     filename: '[name].js',
     path: resolve(__dirname, '../entry/lib'),
