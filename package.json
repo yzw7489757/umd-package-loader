@@ -1,6 +1,6 @@
 {
-  "name": "umd-package-loader",
-  "version": "0.0.4",
+  "name": "@ali/umd-package-loader",
+  "version": "0.0.2",
   "description": "umd 包加载器",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -29,9 +29,9 @@
     "build:rollup": "rollup -c",
     "build": "rm -rf lib/ && npm run test && npm run build:typings &&npm run build:rollup",
     "release": "standard-version --release-as",
-    "publish:major": "npm run release -- major && npm publish",
-    "publish:minor": "npm run release -- minor && npm publish",
-    "publish:patch": "npm run release -- patch && npm publish",
+    "publish:major": "npm run release -- major && tnpm publish",
+    "publish:minor": "npm run release -- minor && tnpm publish",
+    "publish:patch": "npm run release -- patch && tnpm publish",
     "lint": "eslint --quiet ./src --no-error-on-unmatched-pattern",
     "test": "jest",
     "test:watch": "jest --watch"
@@ -98,6 +98,6 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
-  "author": "yzw7489757",
+  "author": "wb-yzw695400<wb-yzw695400@alibaba-inc.com>",
   "license": "MIT"
 }
