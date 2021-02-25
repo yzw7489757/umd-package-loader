@@ -6,8 +6,9 @@ export default (): JSX.Element => {
   useEffect(() => {
     new Loader({
       url: 'https://dev.g.alicdn.com/xspace/component-voice-to-text/0.1.0/index.js',
-      name: 'reactFooter',
+      name: 'voiceToText',
     }).loadScript().then(component => {
+      console.log('component: ', component);
       const node = component.default;
       setCom(React.createElement(node))
     })

@@ -1,6 +1,6 @@
 {
   "name": "@ali/umd-package-loader",
-  "version": "0.0.2",
+  "version": "0.0.0",
   "description": "umd 包加载器",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -96,7 +96,7 @@
     "webpack-notifier": "^1.8.0"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://registry.npm.alibaba-inc.com"
   },
   "author": "wb-yzw695400<wb-yzw695400@alibaba-inc.com>",
   "license": "MIT"
