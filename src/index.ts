@@ -1,8 +1,19 @@
-import { readResAsString, setCache, removeCache, getCache } from './utils/index';
+import { readResAsString, setCache, removeCache, getCache, loadScriptTag, createIframe } from './utils/index';
 
 interface LoaderProps {
   url: string, // 待约定 oss
   name: string;
+
+  /**
+   * @descrption 无缓存加载
+   */
+  noCache?: boolean;
+
+  /**
+   * @descrption 沙盒加载脚本
+   */
+  sandbox?: boolean;
+
   context?: globalThis.Window;
 }
 
@@ -14,23 +25,23 @@ class BaseLoader {
   url: string;
 
   options: LoaderProps;
-  
+
   timestamp: number;
 
-  noCache: boolean;
+  sandbox = false
 
   contextWindow: Window;
 
   constructor(props: LoaderProps) {
     this.timestamp = +new Date() // 缓存时间戳
     this.contextWindow = props.context || window;
-    if(!window.ASSETS_CACHE) {
+    if (!window.ASSETS_CACHE) {
       window.ASSETS_CACHE = Object.create(null);
     }
     // 缓存分为两级
     this.name = this.resolveName(props.name);
     this.url = this.resolveURL(props);
-    this.options = { ...props }
+    this.options = props
   }
 
   /**
@@ -44,6 +55,7 @@ class BaseLoader {
    * @private 根据协议标准，获取url
    */
   private resolveURL = (META: LoaderProps): string => {
+    // 可以在这制定协议
     return this.shouldApplyLocalCache(META.url);
   };
 
@@ -53,7 +65,7 @@ class BaseLoader {
    * @returns {string} 处理后的url
    */
   private shouldApplyLocalCache(url: string): string {
-    const cacheParams = this.noCache ? `?s=${this.timestamp}` : '';
+    const cacheParams = this.options.noCache ? `?s=${this.timestamp}` : '';
     return url + cacheParams
   }
 
@@ -69,93 +81,107 @@ class BaseLoader {
    */
   private setCache = (module: any, resolve?: (value: any) => void) => {
     setCache(this.name, module)
-    if(typeof resolve === 'function') resolve(module)
+    if (typeof resolve === 'function') resolve(module)
   }
 
   /**
    * @public 清除本地缓存与文件缓存，使用timestamp的方式
    */
-  public clearCache = () => {
+  private clearCache = () => {
     removeCache(this.name)
     this.timestamp = +new Date()
     this.url = this.resolveURL(this.options)
   }
 
-  private createNode = (config: { scriptType?: string }, moduleName: string) => {
-    var node = document.createElement('script')
-    node.type = config.scriptType || 'text/javascript';
-    node.charset = 'utf-8';
-    node.async = true;
-    node.setAttribute('data-name', this.name)
-    return node;
-  };
 
   /**
    * @public 加载微应用
    */
   public loadScript = (config: Record<string, any> = {}): Promise<any> => {
     const { name, contextWindow } = this;
-    
+
+    if (this.options.noCache) {
+      this.clearCache();
+      return this.loadScriptWithNoCache();
+    }
+
+    if (this.getCache()) {
+      return Promise.resolve(this.getCache());
+    }
+
     return new Promise((resolve, reject) => {
-      if(this.getCache()) {
-        return this.getCache();
-      }
-      console.time(`loadscript ${this.name}`);
       if (typeof window.requirejs === 'function') {
         // if webpack output `umdNamedDefine: true` must open & window.requirejs([moduleName])
         // window.requirejs.config({ 
         //   paths: { [name]: this.url.replace(/\.js$/, '') }
         // });
-        
+        console.time(`loadscript ${this.name}`);
         window.requirejs(
           [this.url],
-          (module: any) => { 
+          (module: any) => {
             this.setCache(module, resolve);
             console.timeEnd(`loadscript ${name}`);
           },
           (err) => reject(new Error(err)),
         );
       } else {
-        const script = this.createNode(config, 'script',);
-        script.addEventListener('load',  (e) => {
-          if(e.type === 'load') {
+        loadScriptTag({
+          name: this.name,
+          url: this.url
+        }).then(() => {
             this.setCache(contextWindow[name], resolve)
-            console.timeEnd(`loadscript ${name}`);
-          }
         })
-        script.addEventListener('error', function(err){
-          reject(err)
-        })
-        script.src = this.url;
-        document.head.appendChild(script);
       }
     })
   }
 
+
+  private loadScriptWithNoCache(): Promise<any> {
+    const { name, url } = this;
+    return new Promise((resolve, reject) => {
+      fetch(url).then(res => readResAsString(res, false)).then(script => {
+        if (typeof window === 'object' && typeof document === 'object') {
+        /* eslint-disable no-eval */
+          eval(`
+              ;(function(window, self){
+                ;${script}\n;
+                //# sourceURL=${url}\n
+              }).bind(window, window)();
+            `)
+          this.setCache(window[name], resolve)
+        } else if (typeof window === 'undefined' && typeof global === 'object') {
+          // TODO: support Node??? 
+        } else {
+          reject(new Error('must run broswer or node envment'))
+        }
+      })
+    })
+  }
+
   // 未实现
-  // loadScriptWithSandBox = () => {
-    // fetch(this.url).then(res => readResAsString(res, false)).then<Window | void>((script) => {
-    //   if(!window[__AGGREGATE_MAP_KEY][contextId]) {
-    //     return reject(new Error(`${contextId} proxy window is non-existent`));
-    //   }
-    //   this.setCache(script);
-    //   const target = `window.${__AGGREGATE_MAP_KEY}.${contextId}`;
-    //   const sourceUrl = `//# sourceURL=${this.url}\n`;
-    //   /* eslint-disable no-eval */
-    //   eval(`
-    //   ;(function(window, self, document, history){
-    //     ;${script}\n;
-    //     ${sourceUrl}
-    //   }).bind(${target})(${target},${target},window.document,window.history);`)
-    //   return new Promise<Window | never>((r) => {
-    //     window.require([this.name], (res) => {
-    //       window[__AGGREGATE_MAP_KEY][contextId][this.name] = res;
-    //       r(window[__AGGREGATE_MAP_KEY][contextId])
-    //     }, (err) => {
-    //       reject(new Error(`loadscript Error: ${err}`))
-    //     })
-    //   })
-    // })
+  // loadScriptWithSandBox = (script: string) => {
+  //     const win = createIframe();
+  //     const target = `window.__AGGREGATE_MAP_KEY.sandBox`
+  //     window[target] = win;
+
+  //     return new Promise<Window | never>((rs, rj) => {
+  //       /* eslint-disable no-eval */
+  //       eval(`
+  //         with(${target}){
+  //           ;(function(window, self, document, history){
+  //             ;${script}\n;
+  //             //# sourceURL=${this.url}\n
+  //           }).bind(${target})(${target},${target}, ${target}.document,${target}.history);
+  //         }
+  //       `)
+
+  //       window.require([this.name], (res) => {
+  //         window[target][this.name] = res;
+  //         rs(window[target])
+  //       }, (err) => {
+  //         rj(new Error(`loadscript Error: ${err}`))
+  //       })
+  //     })
   // }
 }
 

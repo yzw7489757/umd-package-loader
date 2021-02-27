@@ -1,4 +1,4 @@
-/*! umd-package-loader@0.0.1-beta.1 */
+/*! @ali/umd-package-loader@0.0.0 */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("react"), require("redux"));
@@ -152,7 +152,7 @@ var reducer = function reducer() {
 var store = Object(redux__WEBPACK_IMPORTED_MODULE_1__["createStore"])(reducer);
 
 var Footer = function Footer() {
-  var _React$useState = react__WEBPACK_IMPORTED_MODULE_0___default.a.useState(""),
+  var _React$useState = react__WEBPACK_IMPORTED_MODULE_0___default.a.useState(+new Date()),
       _React$useState2 = _slicedToArray(_React$useState, 2),
       time = _React$useState2[0],
       setTime = _React$useState2[1];
@@ -490,11 +490,11 @@ exports = module.exports = __webpack_require__(6)(true);
 
 
 // module
-exports.push([module.i, ".reactWrapper___32VWZ {\n  background-color: darkgrey;\n}\n", "", {"version":3,"sources":["/Users/ziwen/private/umd-package-loader/appGrounds/react/index.module.less","/Users/ziwen/private/umd-package-loader/appGrounds/react/index.module.less"],"names":[],"mappings":"AAAA;EACE,2BAAA;CCCD","file":"index.module.less","sourcesContent":[".reactWrapper{\n  background-color: darkgrey;\n}",".reactWrapper {\n  background-color: darkgrey;\n}\n"],"sourceRoot":""}]);
+exports.push([module.i, ".reactWrapper___1gBpO {\n  background-color: darkgrey;\n}\n", "", {"version":3,"sources":["D:/project/umd-package-loader/appGrounds/react/D:/project/umd-package-loader/appGrounds/react/index.module.less","D:/project/umd-package-loader/appGrounds/react/index.module.less"],"names":[],"mappings":"AAAA;EACE,2BAAA;CCCD","file":"index.module.less","sourcesContent":[".reactWrapper{\n  background-color: darkgrey;\n}",".reactWrapper {\n  background-color: darkgrey;\n}\n"],"sourceRoot":""}]);
 
 // exports
 exports.locals = {
-	"reactWrapper": "reactWrapper___32VWZ"
+	"reactWrapper": "reactWrapper___1gBpO"
 };
 
 /***/ }),

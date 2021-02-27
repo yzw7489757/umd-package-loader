@@ -6,7 +6,6 @@ const base = require('./webpack.base');
 const { library } = require('./library');
 
 const IN_HTTPS = !!process.env.HTTPS;
-
 const devBaseConfig = {
   ...base,
   
@@ -17,7 +16,7 @@ const devBaseConfig = {
     contentBase: resolve(__dirname, '../entry'),
     https: IN_HTTPS,
     port: 8400,
-    host: '0.0.0.0',
+    host: process.platform === 'win32' ? '127.0.0.1' :'0.0.0.0',
     stats: 'minimal',
   },
 

@@ -21,7 +21,7 @@ const reducer = (state = defaultState, action) => {
 const store = createStore(reducer)
 
 const Footer = () => {
-  const [time, setTime]= React.useState("")
+  const [time, setTime]= React.useState(+new Date())
   useEffect(() => {
     (window as any).a = 1111;
     store.subscribe(() => {

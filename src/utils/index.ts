@@ -70,3 +70,38 @@ export function onlyHash () {
 }
 
 export function noop(){/* */}
+
+
+
+export function loadScriptTag (config: { name: string, url: string, scriptType?: string }) {
+	console.time(`loadscript ${config.name}`);
+	return new Promise<void>((resolve, reject) => {
+		const script = createNode(config);
+		script.addEventListener('load',  (e) => {
+      if(e.type === 'load') {
+        console.timeEnd(`loadscript ${config.name}`);
+        resolve();
+      }
+    })
+		script.addEventListener('error', function(err){
+			reject(err)
+		})
+		script.src = config.url;
+		document.head.appendChild(script);
+	})
+}
+
+export function createNode (config: { scriptType?: string, name:string }) {
+	var node = document.createElement('script')
+	node.type = config.scriptType || 'text/javascript';
+	node.charset = 'utf-8';
+	node.async = true;
+	node.setAttribute('data-name', config.name)
+	return node;
+};
+
+export function createIframe(prop: Record<string, any> = {}) {
+	var node = document.createElement('iframe')
+  const win = node.contentWindow;
+  return win
+}
